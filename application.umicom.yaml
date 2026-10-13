@@ -1,0 +1,47 @@
+# Umicom Framework manifest. This declares a design-time product, not a
+# regulated clinical service. No clinical capability is claimed as implemented.
+schema: umicom.application.v1
+
+application:
+  id: org.umicom.healthcare
+  name: Umicom Healthcare
+  short_name: Healthcare
+  version: 0.1.0
+  executable: umicom-healthcare-console
+  native_executable: umicom-healthcare
+  console_executable: umicom-healthcare-console
+  aliases: [healthcare, health]
+
+framework:
+  minimum_version: 0.9.0
+  compatible_major: 0
+
+frontends:
+  - console
+  # Generic Framework GTK4 preview only until healthcare views exist.
+  - gtk
+
+entry:
+  kind: workbench
+  taskbar_group: system
+  pinned_by_default: false
+  default_layout: healthcare
+
+capabilities:
+  - umicom.application.experience
+  - umicom.application.federation
+
+source_layout:
+  product_root: src
+  composition_root: src
+  console_frontend: src/console
+
+boundaries:
+  owns_reusable_framework_logic: false
+  owns_persistence: false
+  consumes_framework_services: true
+
+installation:
+  component: Healthcare
+  selected_by_default: false
+  show_in_application_launcher: false
