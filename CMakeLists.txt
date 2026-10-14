@@ -140,6 +140,21 @@ if(BUILD_TESTING)
         TIMEOUT 30 LABELS "healthcare;synthetic;regression")
 endif()
 
+# Verify product composition of Framework intake and administrative routing.
+# No medical decision or routing implementation is duplicated in this module.
+if(BUILD_TESTING)
+    add_executable(healthcare-synthetic-flow-test
+        tests/test_synthetic_flow.c)
+    target_link_libraries(healthcare-synthetic-flow-test PRIVATE
+        Umicom::healthcare_module)
+    umicom_apply_warnings(healthcare-synthetic-flow-test)
+    umicom_apply_sanitizers(healthcare-synthetic-flow-test)
+    add_test(NAME healthcare.module.synthetic_flow
+        COMMAND healthcare-synthetic-flow-test)
+    set_tests_properties(healthcare.module.synthetic_flow PROPERTIES
+        TIMEOUT 30 LABELS "healthcare;synthetic;regression")
+endif()
+
 install(TARGETS umicom_healthcare_module
     ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
