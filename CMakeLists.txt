@@ -17,6 +17,7 @@
 #
 # LICENCE:
 #   MIT
+#   Copyright (c) 2026 Umicom Foundation
 #-----------------------------------------------------------------------------
 cmake_minimum_required(VERSION 3.24)
 
@@ -65,6 +66,26 @@ if(NOT COMMAND umicom_apply_sanitizers)
     endfunction()
 endif()
 
+# Attach the Framework-owned synthetic registry as an optional domain
+# capability. The registry's source and public API live in Framework only.
+# The suite places Healthcare at applications/healthcare; the standalone
+# project places it at application. Both layouts are explicitly supported.
+if(NOT TARGET Umicom::healthcare_core)
+    set(_umicom_healthcare_core_module
+        "${CMAKE_CURRENT_SOURCE_DIR}/../../framework/cmake/UmicomHealthcareCore.cmake")
+    if(NOT EXISTS "${_umicom_healthcare_core_module}")
+        set(_umicom_healthcare_core_module
+            "${CMAKE_CURRENT_SOURCE_DIR}/../framework/cmake/UmicomHealthcareCore.cmake")
+    endif()
+    if(NOT EXISTS "${_umicom_healthcare_core_module}")
+        message(FATAL_ERROR
+            "Umicom Healthcare requires the Framework-owned Healthcare Core. "
+            "Verify the Framework submodule in the parent checkout.")
+    endif()
+    include("${_umicom_healthcare_core_module}")
+    unset(_umicom_healthcare_core_module)
+endif()
+
 # Do not place the patient's domain model inside this product library.
 # Product source is limited to identity and composition of Framework services.
 add_library(umicom_healthcare_module STATIC
@@ -79,6 +100,7 @@ target_include_directories(umicom_healthcare_module PUBLIC
 target_link_libraries(umicom_healthcare_module PUBLIC
     Umicom::Framework
     Umicom::application
+    Umicom::healthcare_core
 )
 umicom_apply_warnings(umicom_healthcare_module)
 umicom_apply_sanitizers(umicom_healthcare_module)
@@ -100,6 +122,22 @@ if(BUILD_TESTING)
     add_test(NAME healthcare.module.profile COMMAND healthcare-application-test)
     set_tests_properties(healthcare.module.profile PROPERTIES
         TIMEOUT 30 LABELS "healthcare;scaffold;regression")
+endif()
+
+
+# The product-only regression uses the Framework patient registry directly.
+# No medical state or workflow implementation is added to this module.
+if(BUILD_TESTING)
+    add_executable(healthcare-synthetic-journey-test
+        tests/test_synthetic_journey.c)
+    target_link_libraries(healthcare-synthetic-journey-test PRIVATE
+        Umicom::healthcare_module)
+    umicom_apply_warnings(healthcare-synthetic-journey-test)
+    umicom_apply_sanitizers(healthcare-synthetic-journey-test)
+    add_test(NAME healthcare.module.synthetic_journey
+        COMMAND healthcare-synthetic-journey-test)
+    set_tests_properties(healthcare.module.synthetic_journey PROPERTIES
+        TIMEOUT 30 LABELS "healthcare;synthetic;regression")
 endif()
 
 install(TARGETS umicom_healthcare_module
