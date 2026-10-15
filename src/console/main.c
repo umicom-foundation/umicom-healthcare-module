@@ -16,6 +16,7 @@
  *   Copyright (c) 2026 Umicom Foundation
  *---------------------------------------------------------------------------*/
 #include <stdio.h>
+#include "access_demo.h"
 
 #include "umicom/healthcare_module/application.h"
 #include "umicom/healthcare/synthetic_registry.h"
@@ -96,6 +97,13 @@ int main(void)
     puts("No clinical assessment, treatment decision or prescription was made.");
     UmiHealthcareSyntheticRoutingBookDestroy(routes);
     UmiHealthcareSyntheticEncounterBookDestroy(encounters);
+    /* Extend the existing onboarding exercise through the shared access API;
+     * keep all earlier intake and worklist operations available for comparison. */
+    status = UmicomHealthcareAccessDemo(registry);
     UmiHealthcareSyntheticRegistryDestroy(registry);
+    if (status != UMI_STATUS_OK) {
+        fputs("Synthetic access demonstration failed\n", stderr);
+        return 1;
+    }
     return 0;
 }

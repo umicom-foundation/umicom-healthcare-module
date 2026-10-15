@@ -7,6 +7,24 @@ included as `applications/healthcare` in the
 superproject. It is **not** a medical device, prescription service, electronic
 health record, or clinically validated system in its present form.
 
+## Synthetic access workspace
+
+The native `umicom-healthcare` executable now hosts Framework's synthetic access
+workspace. Register a fictional patient, create an exact-item request, record a
+full or partial offer, accept it, simulate funding, confirm a timed reservation
+and record collection. Unavailable requests, expiry and remaining quantities
+after partial collection can be assigned a fictional follow-up owner.
+
+Records are held in memory and discarded when the window closes. No real
+provider connection, payment, patient authentication or clinical processing is
+performed. The console retains the original intake and worklist demonstrations
+and adds a partial-access example through the same Framework API.
+
+When installed beside Desk, the native executable is discovered through the
+shared application catalogue. `UMICOM_HEALTHCARE_BUILD_GTK4=OFF` disables this
+host; the suite does not replace it with a generic preview. The detailed guide
+is `docs/healthcare/synthetic-access.html` in the Framework checkout.
+
 ## Repository ownership
 
 - **Umicom Framework**: generic application runtime, identity, permissions,
@@ -30,6 +48,12 @@ cmake --build --preset windows-ucrt64-headless-debug --target umicom-healthcare-
 ctest --test-dir .\build\windows-ucrt64-headless-debug -R "^healthcare\." --output-on-failure
 ```
 
+<details>
+<summary>Earlier preview composition, retained as development history</summary>
+
+The native host described above supersedes this preview composition. The original
+instructions remain here for comparison with older checkouts.
+
 For the Framework-supplied **layout preview** (not a clinical UI):
 
 ```powershell
@@ -44,6 +68,8 @@ This initial module is intentionally small. The desktop launcher is created by
 healthcare workstation requires an additional Framework-owned clinical view
 catalogue, validated services and clinical safety controls. This repository
 has **not** been compiled with the user's full current Framework checkout.
+
+</details>
 
 ## Development constraints
 

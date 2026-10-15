@@ -18,12 +18,16 @@ framework:
 
 frontends:
   - console
+  # The following comment records the previous preview-only state.
   # Generic Framework GTK4 preview only until healthcare views exist.
+  # A module-owned host now presents Framework's synthetic access workspace.
   - gtk
 
 entry:
   kind: workbench
-  taskbar_group: system
+  # The preview used system; a dedicated host now has a Healthcare group.
+  # taskbar_group: system
+  taskbar_group: healthcare
   pinned_by_default: false
   default_layout: healthcare
 
@@ -44,4 +48,7 @@ boundaries:
 installation:
   component: Healthcare
   selected_by_default: false
-  show_in_application_launcher: false
+  # Desk still verifies that the native executable exists before launching it.
+  # Previous preview-only registration, retained for review:
+  # show_in_application_launcher: false
+  show_in_application_launcher: true

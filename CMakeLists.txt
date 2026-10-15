@@ -106,7 +106,7 @@ umicom_apply_warnings(umicom_healthcare_module)
 umicom_apply_sanitizers(umicom_healthcare_module)
 
 if(UMICOM_HEALTHCARE_BUILD_CONSOLE)
-    add_executable(umicom-healthcare-console src/console/main.c)
+    add_executable(umicom-healthcare-console src/console/main.c src/console/access_demo.c)
     target_link_libraries(umicom-healthcare-console PRIVATE
         Umicom::healthcare_module)
     umicom_apply_warnings(umicom-healthcare-console)
@@ -171,9 +171,40 @@ if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/LICENSE")
         DESTINATION ${CMAKE_INSTALL_DATADIR}/licenses/healthcare)
 endif()
 
+# Historical preview integration is retained below for review. The module-owned
+# native target declared later now hosts Framework's synthetic access workspace;
+# the generic preview remains available to other application modules.
 # The suite's UmicomSharedNativeApplications.cmake discovers this module's
 # umicom_healthcare_module target and native_executable manifest property.
 # It constructs a GTK4 preview host using Framework-owned UI components.
 # It must not be interpreted as a clinically functional healthcare GUI.
 message(STATUS "Umicom Healthcare scaffold version: ${PROJECT_VERSION}")
 message(STATUS "Clinical functionality: disabled pending Framework implementation and clinical assurance")
+
+# This frontend belongs to the module and hosts Framework's synthetic workspace.
+# The suite detects an existing native target and retains its own generic preview
+# source for other products; no product-specific domain logic is copied here.
+set(_umicom_healthcare_native_default OFF)
+if(TARGET Umicom::healthcare_access_gtk4)
+    set(_umicom_healthcare_native_default ON)
+endif()
+option(UMICOM_HEALTHCARE_BUILD_GTK4 "Build the synthetic Healthcare GTK workspace"
+    ${_umicom_healthcare_native_default})
+unset(_umicom_healthcare_native_default)
+# A disabled module-owned frontend must not be replaced by the suite preview.
+set_property(TARGET umicom_healthcare_module PROPERTY
+    UMICOM_NATIVE_FRONTEND_DISABLED TRUE)
+if(UMICOM_HEALTHCARE_BUILD_GTK4)
+    set_property(TARGET umicom_healthcare_module PROPERTY
+        UMICOM_NATIVE_FRONTEND_DISABLED FALSE)
+    if(NOT TARGET Umicom::healthcare_access_gtk4)
+        message(FATAL_ERROR "Healthcare GTK requires Framework healthcare_access_gtk4; enable Framework GTK support or disable UMICOM_HEALTHCARE_BUILD_GTK4")
+    endif()
+    add_executable(umicom-healthcare src/gtk/main.c)
+    target_link_libraries(umicom-healthcare PRIVATE
+        Umicom::healthcare_module Umicom::healthcare_access_gtk4)
+    umicom_apply_warnings(umicom-healthcare)
+    umicom_apply_sanitizers(umicom-healthcare)
+    install(TARGETS umicom-healthcare
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}" COMPONENT Healthcare)
+endif()
