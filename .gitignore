@@ -37,3 +37,12 @@
 .idea/
 .DS_Store
 Thumbs.db
+
+# Personal CMake settings and dotenv variants may contain machine paths or
+# service credentials. Keep only placeholder examples available for publication.
+/CMakeUserPresets.json
+.env.*
+!.env.example
+!.env.sample
+!.env.template
+!.env.dist
