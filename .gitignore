@@ -46,3 +46,6 @@ Thumbs.db
 !.env.sample
 !.env.template
 !.env.dist
+
+# Internal planning is maintained outside the public source tree.
+/docs/adr/0001-framework-first-healthcare.md
