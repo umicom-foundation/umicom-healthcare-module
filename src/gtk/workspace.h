@@ -9,6 +9,10 @@
 UmiStatus UmiHealthcareNativeWorkspaceNew(GtkWidget **output, GtkWidget **records);
 /* Borrowed editor, or NULL when the optional capability is absent. */
 GtkWidget *UmiHealthcareNativeWorkspaceProfiles(GtkWidget *workspace);
+/* Borrowed importer, or NULL when the optional shared transfer service is absent. */
+GtkWidget *UmiHealthcareNativeWorkspaceProfileImport(GtkWidget *workspace);
+/* Borrowed synthetic storage page; NULL when these SDK capabilities are absent. */
+GtkWidget *UmiHealthcareNativeWorkspaceStorageTools(GtkWidget *workspace);
 /* TRUE permits close; FALSE keeps unsaved or pending editor work visible. */
 gboolean UmiHealthcareNativeWorkspaceRequestClose(GtkWidget *workspace);
 #endif

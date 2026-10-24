@@ -2,6 +2,12 @@
  * Keep product identity and navigation here. Reusable record persistence,
  * editing and access-exercise rules remain Framework services. */
 #include "workspace.h"
+#ifdef UMICOM_HEALTHCARE_STORAGE_TOOLS_AVAILABLE
+#include "storage_tools.h"
+#endif
+#ifdef UMICOM_HEALTHCARE_PROFILE_IMPORT_AVAILABLE
+#include "profile_transfer.h"
+#endif
 #ifdef UMICOM_HEALTHCARE_FORM_EDITOR_AVAILABLE
 #include "umicom/ui/gtk4/form_record_editor.h"
 #include "umicom/healthcare/synthetic_profile.h"
@@ -86,6 +92,31 @@ UmiStatus UmiHealthcareNativeWorkspaceNew(GtkWidget **output, GtkWidget **record
     gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scroll_page(profiles), gtk_label_new("Synthetic profiles"));
 #endif
     if (profile != NULL) g_object_set_data_full(G_OBJECT(notebook), "healthcare-profile-editor", g_object_ref(profile), g_object_unref);
+#ifdef UMICOM_HEALTHCARE_PROFILE_IMPORT_AVAILABLE
+    GtkWidget *importer = NULL;
+    status = UmiHealthcareProfileTransferNew(&importer);
+    GtkWidget *transfer = gtk_box_new(GTK_ORIENTATION_VERTICAL, 10);
+    GtkWidget *transfer_help = gtk_label_new("Import fictional SYN- profiles only. This local exercise preserves the original history and does not overwrite an existing profile or approve care. Choose the destination before reviewing the file.");
+    gtk_label_set_wrap(GTK_LABEL(transfer_help), TRUE);
+    gtk_box_append(GTK_BOX(transfer), transfer_help);
+    gtk_box_append(GTK_BOX(transfer), status == UMI_STATUS_OK ? importer : gtk_label_new("Profile import is unavailable in this build."));
+    int transfer_page = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scroll_page(transfer), gtk_label_new("Import synthetic profiles"));
+    if (importer != NULL) {
+        g_object_set_data_full(G_OBJECT(notebook), "healthcare-profile-import", g_object_ref(importer), g_object_unref);
+        g_object_set_data(G_OBJECT(notebook), "healthcare-profile-import-page", GINT_TO_POINTER(transfer_page + 1));
+    }
+#endif
+#ifdef UMICOM_HEALTHCARE_STORAGE_TOOLS_AVAILABLE
+    /* Product navigation only: Framework performs reads and consistent copies. */
+    GtkWidget *storage = NULL;
+    status = UmiHealthcareStorageToolsNew(&storage);
+    GtkWidget *storage_content = status == UMI_STATUS_OK ? storage : gtk_label_new("Storage tools are unavailable in this build.");
+    int storage_page = gtk_notebook_append_page(GTK_NOTEBOOK(notebook), scroll_page(storage_content), gtk_label_new("Synthetic database tools"));
+    if (storage != NULL) {
+        g_object_set_data_full(G_OBJECT(notebook), "healthcare-storage-tools", g_object_ref(storage), g_object_unref);
+        g_object_set_data(G_OBJECT(notebook), "healthcare-storage-tools-page", GINT_TO_POINTER(storage_page + 1));
+    }
+#endif
     *records = notes;
     *output = notebook;
     return UMI_STATUS_OK;
@@ -115,6 +146,32 @@ gboolean UmiHealthcareNativeWorkspaceRequestClose(GtkWidget *workspace)
         if (gtk_notebook_get_n_pages(GTK_NOTEBOOK(workspace)) > 2) gtk_notebook_set_current_page(GTK_NOTEBOOK(workspace), 2);
     }
 #endif
+#ifdef UMICOM_HEALTHCARE_PROFILE_IMPORT_AVAILABLE
+    GtkWidget *importer = UmiHealthcareNativeWorkspaceProfileImport(workspace);
+    if (allowed && importer != NULL && !UmiFormRecordImportGtk4CanClose(importer)) {
+        allowed = FALSE;
+        int page = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(workspace), "healthcare-profile-import-page")) - 1;
+        if (page >= 0 && page < gtk_notebook_get_n_pages(GTK_NOTEBOOK(workspace))) gtk_notebook_set_current_page(GTK_NOTEBOOK(workspace), page);
+    }
+#endif
+#ifdef UMICOM_HEALTHCARE_STORAGE_TOOLS_AVAILABLE
+    GtkWidget *storage = UmiHealthcareNativeWorkspaceStorageTools(workspace);
+    if (allowed && storage != NULL && !UmiHealthcareStorageToolsCanClose(storage)) {
+        allowed = FALSE;
+        int page = GPOINTER_TO_INT(g_object_get_data(G_OBJECT(workspace), "healthcare-storage-tools-page")) - 1;
+        if (page >= 0 && page < gtk_notebook_get_n_pages(GTK_NOTEBOOK(workspace))) gtk_notebook_set_current_page(GTK_NOTEBOOK(workspace), page);
+    }
+#endif
     g_object_unref(workspace);
     return allowed;
+}
+
+GtkWidget *UmiHealthcareNativeWorkspaceProfileImport(GtkWidget *workspace)
+{
+    return GTK_IS_NOTEBOOK(workspace) ? g_object_get_data(G_OBJECT(workspace), "healthcare-profile-import") : NULL;
+}
+
+GtkWidget *UmiHealthcareNativeWorkspaceStorageTools(GtkWidget *workspace)
+{
+    return GTK_IS_NOTEBOOK(workspace) ? g_object_get_data(G_OBJECT(workspace), "healthcare-storage-tools") : NULL;
 }

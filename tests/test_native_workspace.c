@@ -2,6 +2,12 @@
  * Product composition must retain the established access workspace while
  * exposing the shared Framework editor with its own close policy. */
 #include "workspace.h"
+#ifdef UMICOM_HEALTHCARE_STORAGE_TOOLS_AVAILABLE
+#include "storage_tools.h"
+#endif
+#ifdef UMICOM_HEALTHCARE_PROFILE_IMPORT_AVAILABLE
+#include "umicom/ui/gtk4/form_record_import.h"
+#endif
 #ifdef UMICOM_HEALTHCARE_FORM_EDITOR_AVAILABLE
 #include "umicom/ui/gtk4/form_record_editor.h"
 #endif
@@ -39,6 +45,21 @@ int main(void)
         !UmiFormRecordEditorGtk4CanClose(profiles)) result = 1;
 #else
     if (UmiHealthcareNativeWorkspaceProfiles(root) != NULL) result = 1;
+#endif
+#ifdef UMICOM_HEALTHCARE_PROFILE_IMPORT_AVAILABLE
+    ++expected_pages;
+    GtkWidget *importer = UmiHealthcareNativeWorkspaceProfileImport(root);
+    if (importer == NULL || find(importer, "form-import-review") == NULL ||
+        find(importer, "form-import-restore") == NULL || !UmiFormRecordImportGtk4CanClose(importer)) result = 1;
+#else
+    if (UmiHealthcareNativeWorkspaceProfileImport(root) != NULL) result = 1;
+#endif
+#ifdef UMICOM_HEALTHCARE_STORAGE_TOOLS_AVAILABLE
+    ++expected_pages;
+    GtkWidget *storage = UmiHealthcareNativeWorkspaceStorageTools(root);
+    if (!storage || !UmiHealthcareStorageToolsCanClose(storage) || !find(storage, "healthcare-storage-acknowledgement")) result = 1;
+#else
+    if (UmiHealthcareNativeWorkspaceStorageTools(root) != NULL) result = 1;
 #endif
     if (!GTK_IS_NOTEBOOK(root) || gtk_notebook_get_n_pages(GTK_NOTEBOOK(root)) != expected_pages ||
         find(root, "healthcare-requests") == NULL || !UmiHealthcareNativeWorkspaceRequestClose(root)) result = 1;
