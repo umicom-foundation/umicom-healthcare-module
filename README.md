@@ -25,6 +25,36 @@ shared application catalogue. `UMICOM_HEALTHCARE_BUILD_GTK4=OFF` disables this
 host; the suite does not replace it with a generic preview. The detailed guide
 is `docs/healthcare/synthetic-access.html` in the Framework checkout.
 
+## Local review notes
+
+The native window also offers a **Review notes** tab built from Framework's shared
+record editor. The in-memory statement above applies to the Access exercise.
+Review notes are separate fictional administrative notes saved only when you
+choose a local database and explicitly save a revision. They do not persist the
+Access exercise or approve care, funding, prescriptions or collection.
+
+1. Choose Review notes and enter an absolute database filename in an existing
+   writable directory, for example `C:/umicom/_local/healthcare-notes.sqlite3`.
+2. Select **Open or create database**, then enter a short record key and choose
+   **New draft**. Use fictional information only.
+3. Write the note and enter a reviewer name and revision reason. Select
+   **Save revision** and wait for confirmation. Typing during the write leaves
+   later edits marked as unsaved.
+4. To reopen, select the same database and key, then choose **Open record**.
+   Unsaved work must be saved or explicitly discarded before changing records.
+5. If another writer changed the stored revision, select **Compare stored text**.
+   Review both panes, choose **Keep my draft against this revision**, and save
+   only when your text is ready. A further concurrent change can still refuse
+   the save; earlier stored revisions remain available.
+
+Notes support UTF-8 text up to 16,384 bytes. Reviewer names are recorded labels,
+not authenticated accounts. Storage is local and unencrypted. Closing waits for
+active work and requires a clean draft; forced exit cannot recover unsaved text.
+The full workflow and host integration guide is
+`framework/docs/guides/native-record-editor.html` in the Applications checkout.
+If the optional Framework editor is unavailable, this tab says so and the
+existing Access exercise remains usable.
+
 ## Repository ownership
 
 - **Umicom Framework**: generic application runtime, identity, permissions,
