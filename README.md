@@ -49,7 +49,18 @@ Access exercise or approve care, funding, prescriptions or collection.
 
 Notes support UTF-8 text up to 16,384 bytes. Reviewer names are recorded labels,
 not authenticated accounts. Storage is local and unencrypted. Closing waits for
-active work and requires a clean draft; forced exit cannot recover unsaved text.
+active work and requires a clean draft. Text typed after the last completed recovery copy cannot be recovered after forced exit.
+
+<!-- The previous limitation is retained for comparison: active work and requires a clean draft; forced exit cannot recover unsaved text. Explicit recovery now replaces that blanket limitation; no automatic recovery is implied. -->
+
+Expand **Keep or recover unsaved work** to save a private draft copy to a new
+absolute filename in an existing directory. **Keep draft copy** retains the
+reviewed baseline and captured text, without committing a record revision or
+clearing unsaved state. To resume, open the original database, save or discard
+the current draft, select the copy and choose **Recover draft copy**. A missing
+or different baseline is refused. A newer stored revision still requires the
+normal comparison before saving. Copies are plaintext and must remain private;
+use fictional notes only. Keeping a copy never overwrites an existing file.
 The full workflow and host integration guide is
 `framework/docs/guides/native-record-editor.html` in the Applications checkout.
 If the optional Framework editor is unavailable, this tab says so and the
