@@ -2,6 +2,9 @@
  * Product composition must retain the established access workspace while
  * exposing the shared Framework editor with its own close policy. */
 #include "workspace.h"
+#ifdef UMICOM_HEALTHCARE_FORM_EDITOR_AVAILABLE
+#include "umicom/ui/gtk4/form_record_editor.h"
+#endif
 #ifdef UMICOM_HEALTHCARE_RECORD_EDITOR_AVAILABLE
 #include "umicom/ui/gtk4/record_editor.h"
 #endif
@@ -23,8 +26,22 @@ int main(void)
     if (UmiHealthcareNativeWorkspaceNew(&root, &records) != UMI_STATUS_OK) return 1;
     g_object_ref_sink(root);
     int result = 0;
+    /* Preserve the original two-page expectation for older SDK review. */
+#if 0
     if (!GTK_IS_NOTEBOOK(root) || gtk_notebook_get_n_pages(GTK_NOTEBOOK(root)) != 2 ||
         find(root, "healthcare-requests") == NULL) result = 1;
+#endif
+    int expected_pages = 2;
+#ifdef UMICOM_HEALTHCARE_FORM_EDITOR_AVAILABLE
+    expected_pages = 3;
+    GtkWidget *profiles = UmiHealthcareNativeWorkspaceProfiles(root);
+    if (profiles == NULL || find(profiles, "form-record-connect") == NULL ||
+        !UmiFormRecordEditorGtk4CanClose(profiles)) result = 1;
+#else
+    if (UmiHealthcareNativeWorkspaceProfiles(root) != NULL) result = 1;
+#endif
+    if (!GTK_IS_NOTEBOOK(root) || gtk_notebook_get_n_pages(GTK_NOTEBOOK(root)) != expected_pages ||
+        find(root, "healthcare-requests") == NULL || !UmiHealthcareNativeWorkspaceRequestClose(root)) result = 1;
 #ifdef UMICOM_HEALTHCARE_RECORD_EDITOR_AVAILABLE
     if (records == NULL || records != find(root, "umicom-record-editor") || !UmiRecordEditorGtk4CanClose(records)) result = 1;
     if (records != NULL) {

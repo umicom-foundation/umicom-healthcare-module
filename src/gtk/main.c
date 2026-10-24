@@ -44,6 +44,9 @@ static void activate(GtkApplication *application, gpointer userData)
 
 #endif
 
+/* Keep the notes-only close hook for comparison. The current hook asks the
+ * whole workspace so profile drafts and writes receive the same protection. */
+#if 0
 #ifdef UMICOM_HEALTHCARE_RECORD_EDITOR_AVAILABLE
 static gboolean close_requested(GtkWindow *window, gpointer data)
 {
@@ -57,6 +60,19 @@ static void release_record_editor(gpointer data, GClosure *closure)
 }
 #endif
 
+#endif
+
+static gboolean close_workspace(GtkWindow *window, gpointer data)
+{
+    (void)window;
+    return !UmiHealthcareNativeWorkspaceRequestClose(GTK_WIDGET(data));
+}
+static void release_workspace(gpointer data, GClosure *closure)
+{
+    (void)closure;
+    g_object_unref(data);
+}
+
 static void activate(GtkApplication *application, gpointer userData)
 {
     (void)userData;
@@ -69,10 +85,16 @@ static void activate(GtkApplication *application, gpointer userData)
     gtk_window_set_default_size(GTK_WINDOW(window), 1040, 850);
     if (status != UMI_STATUS_OK) content = gtk_label_new("The synthetic workspace could not be opened. Close the window and try again.");
     gtk_window_set_child(GTK_WINDOW(window), content);
+/* The workspace close policy now covers every composed editor. Retain the
+     * previous notes-only connection as part of the preserved host contract. */
+#if 0
 #ifdef UMICOM_HEALTHCARE_RECORD_EDITOR_AVAILABLE
     if (records != NULL) g_signal_connect_data(window, "close-request", G_CALLBACK(close_requested),
         g_object_ref(records), release_record_editor, 0);
 #endif
+#endif
+    if (status == UMI_STATUS_OK) g_signal_connect_data(window, "close-request", G_CALLBACK(close_workspace),
+        g_object_ref(content), release_workspace, 0);
     gtk_window_present(GTK_WINDOW(window));
 }
 
