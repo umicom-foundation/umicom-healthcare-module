@@ -112,6 +112,19 @@ has **not** been compiled with the user's full current Framework checkout.
 
 </details>
 
+## Find fictional review notes
+
+In **Review notes**, open the local database and expand **Find saved records**.
+Leave search empty to browse Healthcare review notes, or enter part of a key,
+reviewer, source or amendment reason. Choose **Find records**, select a result,
+then choose **Open selected**. Search is case sensitive; note content is not searched.
+**Next results** reads another page. If the store changed, refresh the search.
+Opening refuses unsaved replacement and rechecks the selected revision.
+
+This catalogue belongs to the shared Framework record editor. It lists the
+separate administrative notes, not patients or the Access exercise's requests.
+The access workspace and its existing in-memory behavior remain available.
+
 ## Development constraints
 
 C23 is the default for native implementation, with Assembly only where

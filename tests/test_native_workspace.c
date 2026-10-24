@@ -34,6 +34,12 @@ int main(void)
         GtkWidget *recover = find(records, "record-editor-recover-draft");
         if (keep == NULL || recover == NULL || find(records, "record-editor-recovery-path") == NULL) result = 1;
         else if (gtk_widget_get_sensitive(keep) || gtk_widget_get_sensitive(recover)) result = 1;
+        /* Discovery stays in Framework; the product must expose it without
+         * authorizing reads before its local store has been selected. */
+        GtkWidget *find_records = find(records, "record-editor-find");
+        GtkWidget *open_selected = find(records, "record-editor-open-listed");
+        if (find_records == NULL || open_selected == NULL || find(records, "record-editor-results") == NULL) result = 1;
+        else if (gtk_widget_get_sensitive(find_records) || gtk_widget_get_sensitive(open_selected)) result = 1;
         UmiRecordDraftState state;
         if (UmiRecordEditorGtk4State(records, &state) != UMI_STATUS_OK || state.ready) result = 1;
         UmiRecordEditorGtk4Retire(records);
