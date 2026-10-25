@@ -1,3 +1,19 @@
+/*-----------------------------------------------------------------------------
+ * Umicom Healthcare Module
+ * File: tests/test_profile_transfer.c
+ *
+ * PURPOSE:
+ *   The product imports only the declared fictional-profile domain and waits for
+ *   accepted work before closing. Framework owns all underlying transfer logic.
+ *
+ * AUTHOR AND ORGANISATION:
+ * Sammy Hegab
+ * Umicom Foundation
+ *
+ * LICENCE:
+ * MIT
+ *---------------------------------------------------------------------------*/
+
 /* Umicom Healthcare Module | Sammy Hegab, Umicom Foundation | MIT
  * The product imports only the declared fictional-profile domain and waits for
  * accepted work before closing. Framework owns all underlying transfer logic. */

@@ -1,3 +1,19 @@
+/*-----------------------------------------------------------------------------
+ * Umicom Healthcare Module
+ * File: src/gtk/workspace.c
+ *
+ * PURPOSE:
+ *   Keep product identity and navigation here. Reusable record persistence,
+ *   editing and access-exercise rules remain Framework services.
+ *
+ * AUTHOR AND ORGANISATION:
+ * Sammy Hegab
+ * Umicom Foundation
+ *
+ * LICENCE:
+ * MIT
+ *---------------------------------------------------------------------------*/
+
 /* Umicom Healthcare Module | Sammy Hegab, Umicom Foundation | MIT
  * Keep product identity and navigation here. Reusable record persistence,
  * editing and access-exercise rules remain Framework services. */

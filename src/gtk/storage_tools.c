@@ -1,3 +1,19 @@
+/*-----------------------------------------------------------------------------
+ * Umicom Healthcare Module
+ * File: src/gtk/storage_tools.c
+ *
+ * PURPOSE:
+ *   A local fictional-data acknowledgement is not healthcare authorization.
+ *   Framework retains storage, snapshot, provenance and worker lifetime rules.
+ *
+ * AUTHOR AND ORGANISATION:
+ * Sammy Hegab
+ * Umicom Foundation
+ *
+ * LICENCE:
+ * MIT
+ *---------------------------------------------------------------------------*/
+
 /* Umicom Healthcare Module | Sammy Hegab, Umicom Foundation | MIT
  * A local fictional-data acknowledgement is not healthcare authorization.
  * Framework retains storage, snapshot, provenance and worker lifetime rules. */

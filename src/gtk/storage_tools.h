@@ -1,3 +1,18 @@
+/*-----------------------------------------------------------------------------
+ * Umicom Healthcare Module
+ * File: src/gtk/storage_tools.h
+ *
+ * PURPOSE:
+ *   Compose synthetic local storage exercises using Framework-owned tools.
+ *
+ * AUTHOR AND ORGANISATION:
+ * Sammy Hegab
+ * Umicom Foundation
+ *
+ * LICENCE:
+ * MIT
+ *---------------------------------------------------------------------------*/
+
 /* Umicom Healthcare Module | Sammy Hegab, Umicom Foundation | MIT
  * Compose synthetic local storage exercises using Framework-owned tools. */
 #ifndef UMICOM_HEALTHCARE_STORAGE_TOOLS_H

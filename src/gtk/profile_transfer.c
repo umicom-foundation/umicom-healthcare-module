@@ -1,3 +1,19 @@
+/*-----------------------------------------------------------------------------
+ * Umicom Healthcare Module
+ * File: src/gtk/profile_transfer.c
+ *
+ * PURPOSE:
+ *   Product scope is deliberately limited to the existing local synthetic profile
+ *   exercise. Shared Framework services own all file, schema and store behaviour.
+ *
+ * AUTHOR AND ORGANISATION:
+ * Sammy Hegab
+ * Umicom Foundation
+ *
+ * LICENCE:
+ * MIT
+ *---------------------------------------------------------------------------*/
+
 /* Umicom Healthcare Module | Sammy Hegab, Umicom Foundation | MIT
  * Product scope is deliberately limited to the existing local synthetic profile
  * exercise. Shared Framework services own all file, schema and store behaviour. */

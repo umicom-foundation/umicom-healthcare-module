@@ -1,3 +1,18 @@
+/*-----------------------------------------------------------------------------
+ * Umicom Healthcare Module
+ * File: src/gtk/workspace.h
+ *
+ * PURPOSE:
+ *   Product composition only; Framework owns the domain and record editor.
+ *
+ * AUTHOR AND ORGANISATION:
+ * Sammy Hegab
+ * Umicom Foundation
+ *
+ * LICENCE:
+ * MIT
+ *---------------------------------------------------------------------------*/
+
 /* Umicom Healthcare Module | Sammy Hegab, Umicom Foundation | MIT
  * Product composition only; Framework owns the domain and record editor. */
 #ifndef UMICOM_HEALTHCARE_NATIVE_WORKSPACE_H
