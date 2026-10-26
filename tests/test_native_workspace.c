@@ -3,8 +3,7 @@
  * File: tests/test_native_workspace.c
  *
  * PURPOSE:
- *   Product composition must retain the established access workspace while
- *   exposing the shared Framework editor with its own close policy.
+ *   Product composition must retain the established access workspace while exposing the shared Framework editor with its own close policy.
  *
  * AUTHOR AND ORGANISATION:
  * Sammy Hegab
@@ -13,10 +12,6 @@
  * LICENCE:
  * MIT
  *---------------------------------------------------------------------------*/
-
-/* Umicom Healthcare Module | Sammy Hegab, Umicom Foundation | MIT
- * Product composition must retain the established access workspace while
- * exposing the shared Framework editor with its own close policy. */
 #include "workspace.h"
 #ifdef UMICOM_HEALTHCARE_STORAGE_TOOLS_AVAILABLE
 #include "storage_tools.h"
