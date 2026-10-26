@@ -41,6 +41,10 @@ static GtkWidget *find(GtkWidget *root, const char *name)
     }
     return NULL;
 }
+/* The original fixture walked collapsed sections and reported only a generic
+ * failure. Retain it for review; the active fixture opens those sections and
+ * identifies the failing assertion without weakening composition checks. */
+#if 0
 int main(void)
 {
     if (!gtk_init_check()) return 77;
@@ -101,6 +105,89 @@ int main(void)
     }
 #else
     if (records != NULL) result = 1;
+#endif
+    if (result != 0) fprintf(stderr, "Healthcare native composition contract failed\n");
+    g_object_unref(root);
+    return result;
+}
+#endif
+
+/* Keep this product smoke fixture usable with an installed Framework SDK:
+ * it uses GTK public operations, with no dependency on Framework test headers.
+ * Expand only during setup, before any retirement or mutation observers. */
+static void expand_sections(GtkWidget *root)
+{
+    if (GTK_IS_EXPANDER(root)) gtk_expander_set_expanded(GTK_EXPANDER(root), TRUE);
+    for (GtkWidget *child = gtk_widget_get_first_child(root); child != NULL;
+         child = gtk_widget_get_next_sibling(child)) expand_sections(child);
+}
+int main(void)
+{
+    if (!gtk_init_check()) return 77;
+    GtkWidget *root = NULL, *records = NULL;
+    UmiStatus created = UmiHealthcareNativeWorkspaceNew(&root, &records);
+    if (created != UMI_STATUS_OK || root == NULL) {
+        fprintf(stderr, "Healthcare workspace construction failed: %d\n", (int)created);
+        return 1;
+    }
+    g_object_ref_sink(root);
+    /* Reveal owned GtkExpander content before walking widget descendants.
+     * Fixture setup models opening the sections; product defaults stay closed. */
+    expand_sections(root);
+    int result = 0;
+    /* Preserve the original two-page expectation for older SDK review. */
+#if 0
+    if (!GTK_IS_NOTEBOOK(root) || gtk_notebook_get_n_pages(GTK_NOTEBOOK(root)) != 2 ||
+        find(root, "healthcare-requests") == NULL) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+#endif
+    int expected_pages = 2;
+#ifdef UMICOM_HEALTHCARE_FORM_EDITOR_AVAILABLE
+    expected_pages = 3;
+    GtkWidget *profiles = UmiHealthcareNativeWorkspaceProfiles(root);
+    if (profiles == NULL || find(profiles, "form-record-connect") == NULL ||
+        !UmiFormRecordEditorGtk4CanClose(profiles)) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+#else
+    if (UmiHealthcareNativeWorkspaceProfiles(root) != NULL) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+#endif
+#ifdef UMICOM_HEALTHCARE_PROFILE_IMPORT_AVAILABLE
+    ++expected_pages;
+    GtkWidget *importer = UmiHealthcareNativeWorkspaceProfileImport(root);
+    if (importer == NULL || find(importer, "form-import-review") == NULL ||
+        find(importer, "form-import-restore") == NULL || !UmiFormRecordImportGtk4CanClose(importer)) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+#else
+    if (UmiHealthcareNativeWorkspaceProfileImport(root) != NULL) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+#endif
+#ifdef UMICOM_HEALTHCARE_STORAGE_TOOLS_AVAILABLE
+    ++expected_pages;
+    GtkWidget *storage = UmiHealthcareNativeWorkspaceStorageTools(root);
+    if (!storage || !UmiHealthcareStorageToolsCanClose(storage) || !find(storage, "healthcare-storage-acknowledgement")) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+#else
+    if (UmiHealthcareNativeWorkspaceStorageTools(root) != NULL) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+#endif
+    if (!GTK_IS_NOTEBOOK(root) || gtk_notebook_get_n_pages(GTK_NOTEBOOK(root)) != expected_pages ||
+        find(root, "healthcare-requests") == NULL || !UmiHealthcareNativeWorkspaceRequestClose(root)) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+#ifdef UMICOM_HEALTHCARE_RECORD_EDITOR_AVAILABLE
+    if (records == NULL || records != find(root, "umicom-record-editor") || !UmiRecordEditorGtk4CanClose(records)) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+    if (records != NULL) {
+        /* Product composition exposes the shared recovery controls; before a
+         * database is chosen they must not authorize a storage operation. */
+        GtkWidget *keep = find(records, "record-editor-keep-draft");
+        GtkWidget *recover = find(records, "record-editor-recover-draft");
+        if (keep == NULL || recover == NULL || find(records, "record-editor-recovery-path") == NULL) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+        else if (gtk_widget_get_sensitive(keep) || gtk_widget_get_sensitive(recover)) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+        /* Discovery stays in Framework; the product must expose it without
+         * authorizing reads before its local store has been selected. */
+        GtkWidget *find_records = find(records, "record-editor-find");
+        GtkWidget *open_selected = find(records, "record-editor-open-listed");
+        if (find_records == NULL || open_selected == NULL || find(records, "record-editor-results") == NULL) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+        else if (gtk_widget_get_sensitive(find_records) || gtk_widget_get_sensitive(open_selected)) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+        UmiRecordDraftState state;
+        if (UmiRecordEditorGtk4State(records, &state) != UMI_STATUS_OK || state.ready) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+        UmiRecordEditorGtk4Retire(records);
+        if (UmiRecordEditorGtk4State(records, &state) != UMI_STATUS_UNAVAILABLE) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
+    }
+#else
+    if (records != NULL) { fprintf(stderr, "Healthcare composition assertion at %s:%d\n", __FILE__, __LINE__); result = 1; }
 #endif
     if (result != 0) fprintf(stderr, "Healthcare native composition contract failed\n");
     g_object_unref(root);
