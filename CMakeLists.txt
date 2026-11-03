@@ -339,3 +339,7 @@ install(FILES docs/synthetic-storage-tools.html DESTINATION "${CMAKE_INSTALL_DAT
 unset(_healthcare_storage_definitions)
 unset(_healthcare_storage_case)
 unset(_healthcare_storage_target)
+
+# Ship the practical native-control guide with the existing product help.
+install(FILES docs/NATIVE_WORKFLOWS.html
+    DESTINATION ${CMAKE_INSTALL_DATADIR}/umicom/applications/healthcare/docs)

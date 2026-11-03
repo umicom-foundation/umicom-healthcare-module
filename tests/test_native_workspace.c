@@ -110,6 +110,36 @@ int main(void)
 /* Keep this product smoke fixture usable with an installed Framework SDK:
  * it uses GTK public operations, with no dependency on Framework test headers.
  * Expand only during setup, before any retirement or mutation observers. */
+/* The product must expose the shared synthetic exercise through its real
+ * composed widget tree. Switching tabs must retain the observed result. This
+ * fixture creates no patient database and authorises no clinical operation. */
+static int exercise_product_controls(GtkWidget *root)
+{
+    const char *actions[] = {"healthcare-register", "healthcare-request", "healthcare-full",
+        "healthcare-accept", "healthcare-funding", "healthcare-reserve", "healthcare-collect"};
+    for (size_t i = 0U; i < G_N_ELEMENTS(actions); ++i) {
+        GtkWidget *button = find(root, actions[i]);
+        if (!GTK_IS_BUTTON(button) || !gtk_widget_is_sensitive(button)) {
+            fprintf(stderr, "Healthcare action unavailable: %s\n", actions[i]); return 1;
+        }
+        g_signal_emit_by_name(button, "clicked");
+    }
+    GtkWidget *details = find(root, "healthcare-details");
+    if (!GTK_IS_LABEL(details) ||
+        strstr(gtk_label_get_text(GTK_LABEL(details)), "Collected: 1") == NULL) return 1;
+    char *before = g_strdup(gtk_label_get_text(GTK_LABEL(details)));
+    int count = gtk_notebook_get_n_pages(GTK_NOTEBOOK(root));
+    for (int i = 0; i < count; ++i) {
+        gtk_notebook_set_current_page(GTK_NOTEBOOK(root), i);
+        if (gtk_notebook_get_current_page(GTK_NOTEBOOK(root)) != i) { g_free(before); return 1; }
+    }
+    gtk_notebook_set_current_page(GTK_NOTEBOOK(root), 0);
+    int changed = strcmp(before, gtk_label_get_text(GTK_LABEL(details))) != 0;
+    g_free(before);
+    if (changed || !UmiHealthcareNativeWorkspaceRequestClose(root)) return 1;
+    return 0;
+}
+
 static void expand_sections(GtkWidget *root)
 {
     if (GTK_IS_EXPANDER(root)) gtk_expander_set_expanded(GTK_EXPANDER(root), TRUE);
@@ -129,7 +159,7 @@ int main(void)
     /* Reveal owned GtkExpander content before walking widget descendants.
      * Fixture setup models opening the sections; product defaults stay closed. */
     expand_sections(root);
-    int result = 0;
+    int result = exercise_product_controls(root);
     /* Preserve the original two-page expectation for older SDK review. */
 #if 0
     if (!GTK_IS_NOTEBOOK(root) || gtk_notebook_get_n_pages(GTK_NOTEBOOK(root)) != 2 ||

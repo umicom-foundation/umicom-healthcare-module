@@ -137,3 +137,7 @@ configuration containing identifiable individuals to Git.
 Read `docs/ARCHITECTURE.md`, `docs/FRAMEWORK_BACKLOG.md`,
 `docs/CLINICAL_GOVERNANCE.md` and `../umicom-healthcare/design/UI_MOCKUPS.html` (inside the initial starter archive; the canonical design will be published in the `umicom-healthcare` product repository) before changing the
 clinical implementation boundary.
+
+## Native workflow guide
+
+Read the [native workflow guide](docs/NATIVE_WORKFLOWS.html) for step-by-step use of the implemented controls, expected results and current limits.
